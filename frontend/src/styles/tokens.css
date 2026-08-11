@@ -1,0 +1,77 @@
+/* ---------------------------------------------------------------
+   FRPEWS design tokens
+   Subject: a river-gauge/hydrograph reading, made legible on a phone
+   in bright daylight. Signature element: the "waterline" trace used
+   as a header divider and inside each risk card sparkline.
+------------------------------------------------------------------ */
+:root {
+  /* Color */
+  --bg: #F3F6F4;
+  --surface: #FFFFFF;
+  --surface-sunken: #EAF0EC;
+  --ink: #10231B;
+  --ink-soft: #4D6259;
+  --river: #1C5D6B;
+  --river-deep: #0E3A44;
+  --river-tint: #E4EEEF;
+  --line: #D8E2DD;
+
+  /* Risk scale (thesis section 3.8.2 color coding) */
+  --risk-low: #2F8F4E;
+  --risk-low-tint: #E4F4E9;
+  --risk-moderate: #C99A1E;
+  --risk-moderate-tint: #FBF1DA;
+  --risk-high: #DB7A25;
+  --risk-high-tint: #FCEADA;
+  --risk-extreme: #C6362E;
+  --risk-extreme-tint: #FBE4E2;
+
+  /* Type */
+  --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-body: "Inter", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Layout */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-card: 0 1px 2px rgba(14, 58, 68, 0.06), 0 4px 16px rgba(14, 58, 68, 0.06);
+  --sidebar-w: 240px;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+a { color: inherit; }
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--river);
+  outline-offset: 2px;
+}
+
+.mono { font-family: var(--font-mono); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
