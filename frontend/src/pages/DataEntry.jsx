@@ -37,7 +37,7 @@ export default function DataEntry() {
   const [submittingCsv, setSubmittingCsv] = useState(false);
 
   useEffect(() => {
-    listStations().then(setStations);
+    listStations().then(setStations).catch(() => setStations([]));
   }, []);
 
   const submit = async (e) => {
@@ -45,11 +45,16 @@ export default function DataEntry() {
     setMessage(null);
     setSubmittingManual(true);
     try {
-      await submitEntry({ ...form, station_id: Number(form.station_id) });
+      await submitEntry(form);
       setMessage({ tone: "ok", text: "Observation record saved successfully." });
       setForm(EMPTY);
     } catch (err) {
-      setMessage({ tone: "error", text: err.response?.data?.error || "Could not save this observation record." });
+      const details = err.response?.data?.details;
+      const detailText = Array.isArray(details) && details.length ? ` ${details.join(" ")}` : "";
+      setMessage({
+        tone: "error",
+        text: `${err.response?.data?.error || "Could not save this observation record."}${detailText}`,
+      });
     } finally {
       setSubmittingManual(false);
     }

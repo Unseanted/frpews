@@ -52,25 +52,41 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function LocationDetail() {
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [station, setStation] = useState(null);
   const [prediction, setPrediction] = useState(null);
   const [history, setHistory] = useState([]);
-  const [subscribeMsg, setSubscribeMsg] = useState("");
+  const [subscribeMsg, setSubscribeMsg] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    getStation(id).then(setStation);
+    getStation(id).then(setStation).catch(() => setStation(null));
     getLatestPrediction(id).catch(() => null).then(setPrediction);
-    getHistory(id, 7).then(setHistory);
+    getHistory(id, 7).then(setHistory).catch(() => setHistory([]));
   }, [id]);
 
   const probs = prediction?.ensemble_probabilities || {};
 
+  const alreadySubscribed = user?.subscribed_station_ids
+    ?.map(Number)
+    .includes(Number(id));
+
   const handleSubscribe = () => {
     setSubmitting(true);
     subscribe(id)
-      .then(() => setSubscribeMsg("Subscribed to SMS emergency alerts for this station."))
+      .then(async () => {
+        if (refreshUser) await refreshUser();
+        setSubscribeMsg({
+          tone: "ok",
+          text: "Subscribed to SMS emergency alerts for this station.",
+        });
+      })
+      .catch((err) => {
+        setSubscribeMsg({
+          tone: "error",
+          text: err.response?.data?.error || "Could not subscribe to alerts.",
+        });
+      })
       .finally(() => setSubmitting(false));
   };
 
@@ -212,9 +228,17 @@ export default function LocationDetail() {
             </p>
 
             {user ? (
-              <Button onClick={handleSubscribe} disabled={submitting} className="w-full gap-2">
+              <Button
+                onClick={handleSubscribe}
+                disabled={submitting || alreadySubscribed}
+                className="w-full gap-2"
+              >
                 <Bell className="size-4" />
-                {submitting ? "Subscribing..." : "Subscribe to SMS Alerts"}
+                {alreadySubscribed
+                  ? "Already subscribed"
+                  : submitting
+                    ? "Subscribing..."
+                    : "Subscribe to SMS Alerts"}
               </Button>
             ) : (
               <div className="rounded-lg border bg-muted/40 p-3 text-center text-xs text-muted-foreground">
@@ -226,9 +250,9 @@ export default function LocationDetail() {
             )}
 
             {subscribeMsg && (
-              <Alert>
+              <Alert variant={subscribeMsg.tone === "error" ? "destructive" : "default"}>
                 <CheckCircle2 />
-                <AlertDescription>{subscribeMsg}</AlertDescription>
+                <AlertDescription>{subscribeMsg.text}</AlertDescription>
               </Alert>
             )}
           </CardContent>

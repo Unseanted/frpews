@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Waterline from "../components/Waterline";
-import client from "../api/client";
+import { getStatus, retrain as requestRetrain } from "../api/admin";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { ShieldAlert, Radio, FileText, Cpu, Bell, RefreshCw, CheckCircle2 } from "lucide-react";
@@ -11,15 +11,14 @@ export default function Admin() {
   const [retraining, setRetraining] = useState(false);
 
   useEffect(() => {
-    client.get("/admin/status").then((r) => setStatusData(r.data)).catch(() => {});
+    getStatus().then(setStatusData).catch(() => {});
   }, []);
 
   const retrain = () => {
     setRetraining(true);
     setRetrainMsg("");
-    client
-      .post("/admin/retrain")
-      .then((r) => setRetrainMsg(r.data.message))
+    requestRetrain()
+      .then((data) => setRetrainMsg(data.message))
       .catch((err) => setRetrainMsg(err.response?.data?.error || "Retraining request failed."))
       .finally(() => setRetraining(false));
   };

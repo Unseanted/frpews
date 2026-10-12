@@ -1,5 +1,6 @@
 node_modules/
 .env
+.DS_Store
 vite.config.js.timestamp-*.mjs
 vite.config.mjs.timestamp-*.mjs
 vite.config.cjs.timestamp-*.mjs
@@ -12,3 +13,18 @@ vitest.config.cjs.timestamp-*.mjs
 vitest.config.ts.timestamp-*.mjs
 vitest.config.mts.timestamp-*.mjs
 vitest.config.cts.timestamp-*.mjs
+
+# Backend
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.env
+backend/data/raw/*.csv
+backend/data/processed/*.csv
+backend/app/ml/artifacts/*.joblib
+backend/app/ml/artifacts/*.keras
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
